@@ -1,0 +1,36 @@
+plugins {
+	id 'java-library'
+    id 'maven-publish'
+}
+
+java {
+	withSourcesJar()
+	withJavadocJar()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+		from components.java
+        }
+    }
+}
+
+sourceCompatibility = 21
+targetCompatibility = 21
+
+def packagename = "ore3d"
+group = "design.ore"
+version = "2.5.4"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	implementation 'com.jfoenix:jfoenix:9.0.10'
+	implementation 'org.controlsfx:controlsfx:11.2.0'
+    implementation 'org.fxmisc.easybind:easybind:1.0.3'
+    
+    implementation project(':base')
+}

@@ -1,1 +1,2 @@
 rootProject.name = 'Ore-API'
+include 'base', 'core', 'ore3d', 'integrateore'
