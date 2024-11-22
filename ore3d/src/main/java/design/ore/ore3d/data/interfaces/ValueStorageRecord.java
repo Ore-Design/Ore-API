@@ -14,9 +14,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import design.ore.ore3d.Util;
-import design.ore.ore3d.Util.Log;
-import design.ore.ore3d.Util.Mapper;
+import design.ore.base.util.Log;
+import design.ore.base.util.Mapper;
 import design.ore.ore3d.data.StoredValue;
 import lombok.Getter;
 
@@ -88,7 +87,7 @@ public abstract class ValueStorageRecord
 				catch (Exception e)
 				{
 					try { values.put(entry.getKey(), Mapper.getMapper().readValue("\"" + entry.getValue().getValue() + "\"", JsonNode.class)); }
-					catch (Exception ex) { Log.getLogger().warn(Util.formatThrowable("Error serializing stored value from class type '" + getClass().toString() + "'! Skipping!", e)); }
+					catch (Exception ex) { Log.getLogger().warn(Log.formatThrowable("Error serializing stored value from class type '" + getClass().toString() + "'! Skipping!", e)); }
 				}
 			}
 			else Log.getLogger().warn("Stored value with key " + entry.getKey() + " has null/empty data! Skipping...");

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import design.ore.ore3d.Registry;
+import design.ore.ore3d.Ore3DRegistry;
 import design.ore.ore3d.data.core.Build;
 import design.ore.ore3d.data.interfaces.ISummaryOption;
 import design.ore.ore3d.data.interfaces.ValueStorageRecord;
@@ -116,7 +116,7 @@ public class RoutingEntry extends ValueStorageRecord implements ISummaryOption
 		RoutingEntry newEntry = new RoutingEntry(id, name, newCostPerQuantity, newQuantity, margin, parent, isCustom);
 		newEntry.putStoredValues(getStoredValues());
 		if(overriddenQuantity != null) newEntry.setOverriddenQuantity(overriddenQuantity);
-		Registry.handleRoutingDuplicate(newEntry);
+		Ore3DRegistry.handleRoutingDuplicate(newEntry);
 		return newEntry;
 	}
 	public RoutingEntry duplicate(double newQuantity, Build parent, Double overriddenQuantity, boolean isCustom) { return duplicate(costPerQuantityProperty.doubleValue(), newQuantity, parent, getMargin(), overriddenQuantity, isCustom); }

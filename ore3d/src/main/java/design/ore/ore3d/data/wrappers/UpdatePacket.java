@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
-import design.ore.ore3d.Util;
+import design.ore.base.util.Log;
 import design.ore.ore3d.data.SaveTask;
 import design.ore.ore3d.data.Tuple;
 import javafx.beans.binding.Bindings;
@@ -99,7 +99,7 @@ public class UpdatePacket
 		try { return generateNextUpdatePacket.call(); }
 		catch (Exception e)
 		{
-			Util.Log.getLogger().warn("An error occured while creating the next update packet!");
+			Log.getLogger().warn("An error occured while creating the next update packet!");
 			return null;
 		}
 	}

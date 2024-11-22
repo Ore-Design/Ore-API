@@ -8,12 +8,15 @@ import java.util.Optional;
 import com.dlsc.keyboardfx.KeyboardView;
 
 import design.ore.base.util.Log;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
@@ -26,35 +29,23 @@ import lombok.Getter;
 public class Navigation
 {
 	IMenu currentMenu;
-	
-	/**
-	 * This StackPane wraps all {@link IMenu} root nodes inside of it (see {@link IMenu.getRoot() getRoot})
-	 */
 	StackPane loadStack;
-	
-	/**
-	 * This list contains all {@link IMenu}s inside of it.
-	 */
 	final List<IMenu> menus = new ArrayList<IMenu>();
 	
 	final Scene scene;
 	@Getter private final Stage stage;
 	
-	/**
-	 * An optional {@link KeyboardView}, used if Navigation is initialized in tablet mode.
-	 */
 	KeyboardView keyboard;
+	@Getter private final SimpleStringProperty stylesheetProperty;
+	private final ReadOnlyDoubleWrapper fontSizeProperty = new ReadOnlyDoubleWrapper(10);
 	
 	/**
-	 * A utility property that can be used for dynamic resizing.
+	 * @return the read-only font size property.
 	 */
-	private final ReadOnlyDoubleWrapper fontSizeProperty = new ReadOnlyDoubleWrapper(10);
 	public ReadOnlyDoubleProperty fontSizeProperty() { return fontSizeProperty.getReadOnlyProperty(); }
 	
-	@Getter private final SimpleStringProperty stylesheetProperty;
-	
 	/**
-	 * @param stage                the stage for this Navigation to control, typically the Stage passed in from JavaFX Application start() method.
+	 * @param stage                the stage for this Navigation to control, typically the Stage passed in from JavaFX Application {@link Application#start(Stage)} method.
 	 * @param initialMenus         a collection of all IMenu instances, which should have their root Panes initialized by this point.
 	 * @param stylesheetProperty   an optional SimpleStringProperty to be used as the current stylesheet selection.
 	 * @param tabletMode           true if the table mode on-screen keyboard should be used, otherwise false.
@@ -66,6 +57,7 @@ public class Navigation
 		menus.addAll(initialMenus);
 		
 		currentMenu = menus.get(0);
+		menus.forEach(menu -> menu.setNavigation(this));
 		
 		loadStack = new StackPane(currentMenu.getRoot());
 		loadStack.setAlignment(Pos.TOP_LEFT);
@@ -85,7 +77,7 @@ public class Navigation
 		
 		if(stylesheetProperty != null) this.stylesheetProperty = stylesheetProperty;
 		else this.stylesheetProperty = new SimpleStringProperty("");
-		bindUIToStylesheet(scene);
+		bindSceneToStylesheet(scene);
 		
 		if(tabletMode)
 		{
@@ -134,6 +126,12 @@ public class Navigation
 		if(target.isEmpty()) Log.getLogger().info("No menu exists with ID " + id + "!");
 		else
 		{
+			menuLockedDialogs.forEach(diag -> Platform.runLater(() -> diag.close()));
+			menuLockedDialogs.clear();
+
+			menuLockedSubStages.forEach(stage -> Platform.runLater(() -> stage.close()));
+			menuLockedSubStages.clear();
+			
 			currentMenu.exit();
 			currentMenu = target.get();
 
@@ -144,29 +142,40 @@ public class Navigation
 	}
 	
 	/**
-	 * Binds a given JavaFX UI element to the stylesheetProperty.
-	 * This does nothing unless the Object passed in is/extends a JavaFX Scene
-	 * or JavaFX Parent object.
+	 * Binds a given JavaFX {@link Scene} element to the stylesheetProperty.
 	 * 
-	 * @param ui   the UI element to be bound.
+	 * @param scene   the {@link Scene} to be bound.
 	 */
-	public void bindUIToStylesheet(Object ui)
+	public void bindSceneToStylesheet(Scene scene)
 	{
-		if(ui instanceof Scene) ((Scene) ui).getStylesheets().add(stylesheetProperty.getValue());
-		else if(ui instanceof Parent) ((Parent) ui).getStylesheets().add(stylesheetProperty.getValue());
+		scene.getStylesheets().add(stylesheetProperty.getValue());
 		
 		stylesheetProperty.addListener((obs, oldVal, newVal) ->
 		{
-			if(ui instanceof Scene)
-			{
-				((Scene) ui).getStylesheets().remove(oldVal);
-				((Scene) ui).getStylesheets().add(newVal);
-			}
-			else if(ui instanceof Parent)
-			{
-				((Parent) ui).getStylesheets().remove(oldVal);
-				((Parent) ui).getStylesheets().add(newVal);
-			}
+			scene.getStylesheets().remove(oldVal);
+			scene.getStylesheets().add(newVal);
 		});
 	}
+	
+	/**
+	 * Binds a given JavaFX {@link Parent} element to the stylesheetProperty.
+	 * 
+	 * @param parent   the {@link Parent} to be bound.
+	 */
+	public void bindParentToStylesheet(Parent parent)
+	{
+		parent.getStylesheets().add(stylesheetProperty.getValue());
+		
+		stylesheetProperty.addListener((obs, oldVal, newVal) ->
+		{
+			parent.getStylesheets().remove(oldVal);
+			parent.getStylesheets().add(newVal);
+		});
+	}
+	
+	private final List<Dialog<?>> menuLockedDialogs = new ArrayList<>();
+	public void registerMenuLockedDialog(Dialog<?> dialog) { menuLockedDialogs.add(dialog); }
+	
+	private final List<Stage> menuLockedSubStages = new ArrayList<>();
+	public void registerMenuLockedSubStage(Stage stage) { menuLockedSubStages.add(stage); }
 }

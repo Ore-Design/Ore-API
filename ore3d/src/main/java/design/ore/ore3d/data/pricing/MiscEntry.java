@@ -8,10 +8,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import design.ore.ore3d.Registry;
-import design.ore.ore3d.Util;
-import design.ore.ore3d.Util.Log;
-import design.ore.ore3d.Util.Mapper;
+import design.ore.base.util.Log;
+import design.ore.base.util.Mapper;
+import design.ore.ore3d.Ore3DRegistry;
 import design.ore.ore3d.data.core.Build;
 import design.ore.ore3d.data.interfaces.ISummaryOption;
 import design.ore.ore3d.data.interfaces.ValueStorageRecord;
@@ -80,11 +79,11 @@ public class MiscEntry extends ValueStorageRecord implements ISummaryOption
 			String json = Mapper.getMapper().writeValueAsString(this);
 			newEntry = Mapper.getMapper().readValue(json, MiscEntry.class);
 			newEntry.setParentBuild(newParent);
-			Registry.handleMiscDuplicate(newEntry);
+			Ore3DRegistry.handleMiscDuplicate(newEntry);
 		}
 		catch (JsonProcessingException e) 
 		{
-			Log.getLogger().error("Issue duplicating Misc entry!\n" + Util.throwableToString(e));
+			Log.getLogger().error("Issue duplicating Misc entry!\n" + Log.throwableToString(e));
 		}
 		
 		return newEntry;

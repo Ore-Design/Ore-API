@@ -4,12 +4,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import design.ore.ore3d.Util;
-import design.ore.ore3d.Util.Colors;
+import design.ore.base.util.NotifUtil;
+import design.ore.ore3d.Ore3DUtil;
 import design.ore.ore3d.data.interfaces.ISpecUI;
 import design.ore.ore3d.data.specs.Spec;
 import design.ore.ore3d.data.specs.StringSpec;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,7 +18,6 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -77,7 +75,7 @@ public class LargeStringSpecUI extends HBox implements ISpecUI<String>
 		
 		String title = parentSpec.getParentBuild().getParentTransactionProperty().isNull().get() ?
 			parentSpec.getId() : parentSpec.getId() + " - " + parentSpec.getParentBuild().getParentTransactionProperty().get().getDisplayName();
-		popoutButton.setOnAction(e -> Util.UI.showPopup(createPopoutUI(), popoutID, title, true));
+		popoutButton.setOnAction(e -> Ore3DUtil.showPopup(createPopoutUI(), NotifUtil.getNavigation(), title, true));
 	}
 
 	// Multiselect shouldn't allow multiselect at all
@@ -118,7 +116,6 @@ public class LargeStringSpecUI extends HBox implements ISpecUI<String>
 		layout.setFillWidth(true);
 		layout.setPadding(new Insets(10));
 		layout.setSpacing(10);
-		layout.backgroundProperty().bind(Bindings.createObjectBinding(() -> Background.fill(Colors.getBackgroundProperty().getValue()), Colors.getBackgroundProperty()));
 		
 		return layout;
 	}

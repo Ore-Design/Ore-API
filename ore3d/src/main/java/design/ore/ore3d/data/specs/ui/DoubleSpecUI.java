@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import design.ore.ore3d.Util;
-import design.ore.ore3d.Util.Colors;
+import design.ore.base.util.BindingUtil;
+import design.ore.ore3d.Ore3DUtil;
 import design.ore.ore3d.data.interfaces.ISpecUI;
 import design.ore.ore3d.data.specs.DoubleSpec;
 import design.ore.ore3d.data.specs.Spec;
@@ -49,8 +49,8 @@ public class DoubleSpecUI extends HBox implements ISpecUI<Number>
 		idLabel.setMaxWidth(Control.USE_PREF_SIZE);
 
 		linkToggleButton = new ToggleIconButton(
-			Util.UI.colorize(new ImageView(Util.getChainIcon()), Colors.getAccentProperty()),
-			Util.UI.colorize(new ImageView(Util.getBrokenChainIcon()), Colors.getAccentProperty()),
+			new ImageView(Ore3DUtil.getChainIcon()),
+			new ImageView(Ore3DUtil.getBrokenChainIcon()),
 			false);
 		linkToggleButton.setOnAction(e -> parentSpec.setLinkIsActive(!parentSpec.linkIsActive()));
 		linkToggleButton.prefHeightProperty().bind(heightProperty());
@@ -60,7 +60,7 @@ public class DoubleSpecUI extends HBox implements ISpecUI<Number>
 
 		inputField = new TextField();
 		inputField.getStyleClass().add("spec-text-field");
-		inputField.setTextFormatter(Util.getDecimalFormatter(2));
+		inputField.setTextFormatter(BindingUtil.getDecimalFormatter(2));
 		inputField.prefWidthProperty().bind(widthProperty().multiply(0.5));
 		inputField.setMaxWidth(Control.USE_PREF_SIZE);
 		

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import design.ore.ore3d.Util;
+import design.ore.base.util.BindingUtil;
 import design.ore.ore3d.data.interfaces.ISpecUI;
 import design.ore.ore3d.data.specs.IntegerSpec;
 import design.ore.ore3d.data.specs.Spec;
@@ -36,7 +36,7 @@ public class IntegerSpecUI extends HBox implements ISpecUI<Number>
 	private final ChangeListener<Boolean> positiveOnlyListener;
 	private ChangeListener<Boolean> calculateOnEndMultiListener;
 	
-	private final TextFormatter<?> integerFormatter = Util.getIntegerFormatter();
+	private final TextFormatter<?> integerFormatter = BindingUtil.getIntegerFormatter();
 	private final PositiveIntegerTextFormatter positiveIntegerFormatter = new PositiveIntegerTextFormatter();
 	
 	public IntegerSpecUI(IntegerSpec parent)

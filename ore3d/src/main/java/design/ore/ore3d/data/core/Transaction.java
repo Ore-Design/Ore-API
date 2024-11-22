@@ -15,9 +15,9 @@ import com.fasterxml.jackson.annotation.JsonMerge;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import design.ore.ore3d.Registry;
-import design.ore.ore3d.Util;
-import design.ore.ore3d.Util.Log;
+import design.ore.base.util.Log;
+import design.ore.ore3d.Ore3DRegistry;
+import design.ore.ore3d.Ore3DUtil;
 import design.ore.ore3d.data.Conflict;
 import design.ore.ore3d.data.crm.Customer;
 import design.ore.ore3d.data.interfaces.ValueStorageRecord;
@@ -165,9 +165,9 @@ public class Transaction extends ValueStorageRecord
 		List<BOMEntry> bomToAdd = new ArrayList<BOMEntry>();
 		for(BOMEntry bom : b.getBom())
 		{
-			BOMEntry match = Registry.getBOMEntries().get(bom.getId());
-			if(match != null) bomToAdd.add(Util.duplicateBOMWithPricing(this, b, match, bom));
-			else { Util.Log.getLogger().warn("Data has changed since this record was last loaded! BOM entry " + bom.getId() + " no longer exists in loaded databases!"); }
+			BOMEntry match = Ore3DRegistry.getBOMEntries().get(bom.getId());
+			if(match != null) bomToAdd.add(Ore3DUtil.duplicateBOMWithPricing(this, b, match, bom));
+			else { Log.getLogger().warn("Data has changed since this record was last loaded! BOM entry " + bom.getId() + " no longer exists in loaded databases!"); }
 		}
 		
 		b.getBom().clear();
@@ -176,9 +176,9 @@ public class Transaction extends ValueStorageRecord
 		List<RoutingEntry> routingToAdd = new ArrayList<RoutingEntry>();
 		for(RoutingEntry r : b.getRoutings())
 		{
-			RoutingEntry match = Registry.getRoutingEntries().get(r.getId());
-			if(match != null) routingToAdd.add(Util.duplicateRoutingWithPricing(this, b, match, r));
-			else { Util.Log.getLogger().warn("Data has changed since this record was last loaded! Routing entry " + r.getId() + " no longer exists in loaded databases!"); }
+			RoutingEntry match = Ore3DRegistry.getRoutingEntries().get(r.getId());
+			if(match != null) routingToAdd.add(Ore3DUtil.duplicateRoutingWithPricing(this, b, match, r));
+			else { Log.getLogger().warn("Data has changed since this record was last loaded! Routing entry " + r.getId() + " no longer exists in loaded databases!"); }
 		}
 		
 		b.getRoutings().clear();

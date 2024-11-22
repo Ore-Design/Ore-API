@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import design.ore.ore3d.Util.Mapper;
+import design.ore.base.util.Mapper;
 import design.ore.ore3d.data.core.Build;
 import design.ore.ore3d.data.interfaces.ISpecUI;
 import design.ore.ore3d.data.specs.ui.EnumSpecUI;

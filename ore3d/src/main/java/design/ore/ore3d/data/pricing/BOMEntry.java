@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import design.ore.ore3d.Registry;
+import design.ore.ore3d.Ore3DRegistry;
 import design.ore.ore3d.data.core.Build;
 import design.ore.ore3d.data.interfaces.ISummaryOption;
 import design.ore.ore3d.data.interfaces.ValueStorageRecord;
@@ -153,7 +153,7 @@ public class BOMEntry extends ValueStorageRecord implements ISummaryOption
 	{
 		BOMEntry newEntry = new BOMEntry(id, shortName, longName, unitOfMeasure, newCostPerQuantity, isCustom, newQuantity, unoverriddenMarginProperty.get(), ignoreParentQuantity, parent);
 		newEntry.putStoredValues(getStoredValues());
-		Registry.handleBOMDuplicate(newEntry);
+		Ore3DRegistry.handleBOMDuplicate(newEntry);
 		return newEntry;
 	}
 	public BOMEntry duplicate(double newCostPerQuantity, double newQuantity, Build parent, boolean isCustom) { return duplicate(newCostPerQuantity, newQuantity, parent, isCustom, getIgnoreParentQuantity()); }

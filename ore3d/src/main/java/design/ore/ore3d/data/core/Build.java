@@ -19,10 +19,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import design.ore.ore3d.Registry;
-import design.ore.ore3d.Util;
-import design.ore.ore3d.Util.Log;
-import design.ore.ore3d.Util.Mapper;
+import design.ore.base.util.Log;
+import design.ore.base.util.Mapper;
+import design.ore.ore3d.Ore3DRegistry;
+import design.ore.ore3d.Ore3DUtil;
 import design.ore.ore3d.data.ChildBuildMenuNode;
 import design.ore.ore3d.data.Conflict;
 import design.ore.ore3d.data.StoredValue;
@@ -361,15 +361,15 @@ public abstract class Build extends ValueStorageRecord
 		Build duplicate = null;
 		try
 		{
-			String original = Util.Mapper.getMapper().writeValueAsString(this);
+			String original = Mapper.getMapper().writeValueAsString(this);
 			Log.getLogger().debug("Duplicated build JSON: " + original);
-			duplicate = Util.Mapper.getMapper().readValue(original, Build.class);
+			duplicate = Mapper.getMapper().readValue(original, Build.class);
 		}
-		catch (JsonProcessingException e) { Util.Log.getLogger().error("An error has occured while duplicating build!\n" + e.getMessage() + "\n" + Util.throwableToString(e)); }
+		catch (JsonProcessingException e) { Log.getLogger().error(design.ore.base.util.Log.formatThrowable("An error has occured while duplicating build!", e)); }
 		
 		duplicate.regenerateBuildUUID();
 		duplicate.workOrder.setValue("");
-		Registry.handleBuildDuplicate(duplicate);
+		Ore3DRegistry.handleBuildDuplicate(duplicate);
 		
 		return duplicate;
 	}
@@ -479,11 +479,11 @@ public abstract class Build extends ValueStorageRecord
 				BOMEntry newBOM = e;
 				if(this.parentBuildProperty.get() != null)
 				{
-					if(parentTran != null) newBOM = Util.duplicateBOMWithPricing(parentTran, this, e, e);
-					else Util.Log.getLogger().debug("No transaction parent is registered for the top-level parent of build " + this.getTitleProperty().get() + ", so pricing for generated BOMs cant be matched to transaction!");
+					if(parentTran != null) newBOM = Ore3DUtil.duplicateBOMWithPricing(parentTran, this, e, e);
+					else Log.getLogger().debug("No transaction parent is registered for the top-level parent of build " + this.getTitleProperty().get() + ", so pricing for generated BOMs cant be matched to transaction!");
 				}
-				else if(parentTransactionProperty.get() != null) newBOM = Util.duplicateBOMWithPricing(parentTransactionProperty.get(), this, e, e);
-				else Util.Log.getLogger().debug("No transaction parent is registered for the build " + this.getTitleProperty().get() + ", so pricing for generated BOMs cant be matched to transaction!");
+				else if(parentTransactionProperty.get() != null) newBOM = Ore3DUtil.duplicateBOMWithPricing(parentTransactionProperty.get(), this, e, e);
+				else Log.getLogger().debug("No transaction parent is registered for the build " + this.getTitleProperty().get() + ", so pricing for generated BOMs cant be matched to transaction!");
 					
 				if(overriddenStandardBOMS.containsKey(e.getId()))
 				{
@@ -494,7 +494,7 @@ public abstract class Build extends ValueStorageRecord
 					if(marginOverride != null) newBOM.getOverridenMarginProperty().set(marginOverride);
 				}
 				
-				for(Entry<String, StoredValue> entry : Registry.getRegisteredBOMEntryStoredValues().entrySet()) { newBOM.putStoredValue(entry.getKey(), entry.getValue().duplicate()); }
+				for(Entry<String, StoredValue> entry : Ore3DRegistry.getRegisteredBOMEntryStoredValues().entrySet()) { newBOM.putStoredValue(entry.getKey(), entry.getValue().duplicate()); }
 				bom.add(newBOM);
 			}
 			
@@ -506,7 +506,7 @@ public abstract class Build extends ValueStorageRecord
 					if(overrides != null) r.getOverridenQuantityProperty().set(overrides);
 				}
 	
-				for(Entry<String, StoredValue> entry : Registry.getRegisteredRoutingEntryStoredValues().entrySet()) { r.putStoredValue(entry.getKey(), entry.getValue().duplicate()); }
+				for(Entry<String, StoredValue> entry : Ore3DRegistry.getRegisteredRoutingEntryStoredValues().entrySet()) { r.putStoredValue(entry.getKey(), entry.getValue().duplicate()); }
 				routings.add(r);
 			}
 
@@ -582,7 +582,7 @@ public abstract class Build extends ValueStorageRecord
 		for(Build cb : getChildBuilds()) { cb.runCatalogDetection(); }
 		
 		CatalogItem catalog = null;
-		for(CatalogItem ci : Registry.getRegisteredCatalogItems())
+		for(CatalogItem ci : Ore3DRegistry.getRegisteredCatalogItems())
 		{
 			if(this.matches(ci.getBuild()))
 			{
@@ -596,8 +596,8 @@ public abstract class Build extends ValueStorageRecord
 			boolean parentIsCatalog = parentBuildProperty.isNotNull().get() && parentBuildProperty.get().isCatalog.get();
 			boolean childrenHaveNonCatalog = getChildBuilds().stream().anyMatch(cb -> !cb.isCatalog.get());
 			
-			if((parentIsCatalog || parentBuildProperty.isNull().get() || !Registry.isChildrenOnlyCatalogIfParentIsCatalog()) &&
-				(!childrenHaveNonCatalog || !Registry.isCustomChildrenPreventCatalogParents() || childBuilds.size() == 0))
+			if((parentIsCatalog || parentBuildProperty.isNull().get() || !Ore3DRegistry.isChildrenOnlyCatalogIfParentIsCatalog()) &&
+				(!childrenHaveNonCatalog || !Ore3DRegistry.isCustomChildrenPreventCatalogParents() || childBuilds.size() == 0))
 			{
 				catalogPrice.set(catalog.getPrice());
 				return;

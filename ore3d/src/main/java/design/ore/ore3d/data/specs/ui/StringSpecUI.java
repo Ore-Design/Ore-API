@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import design.ore.ore3d.Util;
+import design.ore.base.util.BindingUtil;
 import design.ore.ore3d.data.interfaces.ISpecUI;
 import design.ore.ore3d.data.specs.Spec;
 import design.ore.ore3d.data.specs.StringSpec;
@@ -43,7 +43,7 @@ public class StringSpecUI extends HBox implements ISpecUI<String>
 
 		inputField = new TextField();
 		inputField.getStyleClass().add("spec-text-field");
-		inputField.setTextFormatter(Util.getDecimalFormatter(2));
+		inputField.setTextFormatter(BindingUtil.getDecimalFormatter(2));
 		inputField.prefWidthProperty().bind(widthProperty().multiply(0.6));
 		inputField.setMaxWidth(Control.USE_PREF_SIZE);
 		

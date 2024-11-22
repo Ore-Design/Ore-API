@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import design.ore.ore3d.Util.UI;
+import design.ore.base.util.UIUtil;
 import design.ore.ore3d.data.interfaces.ISpecUI;
 import design.ore.ore3d.data.specs.BooleanSpec;
 import design.ore.ore3d.data.specs.Spec;
@@ -38,7 +38,7 @@ public class BooleanSpecUI extends HBox implements ISpecUI<Boolean>
 		
 		check = new CheckBox();
 		check.maxHeightProperty().bind(idLabel.heightProperty().multiply(0.7));
-		UI.checkboxMatchSize(check);
+		UIUtil.checkboxMatchSize(check);
 		
 		getChildren().addAll(idLabel, check);
 		setAlignment(Pos.CENTER_LEFT);

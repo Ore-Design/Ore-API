@@ -8,11 +8,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import ch.qos.logback.classic.Logger;
-import design.ore.ore3d.Util.Log;
-import design.ore.ore3d.Util.Mapper;
+import design.ore.base.util.Log;
 import design.ore.ore3d.data.PrecheckEvent;
 import design.ore.ore3d.data.StoredValue;
 import design.ore.ore3d.data.core.Build;
@@ -26,20 +22,8 @@ import design.ore.ore3d.data.wrappers.CatalogItem;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Registry
-{
-	public static void registerLogger(Logger log) { if(Log.logger == null) { Log.logger = log; } else { Log.logger.warn("Someone attempted to register a different logger, but it's locked!"); } }
-	
-	public static void registerMapperFactory(Callable<ObjectMapper> mapperFactory)
-	{
-		if(Mapper.mapperFactory == null)
-		{
-			Mapper.mapperFactory = mapperFactory;
-			Mapper.mapper = Mapper.createMapper();
-		}
-		else { Log.logger.warn("Someone attempted to register a different mapper factory, but it's locked!"); }
-	}
-	
+public class Ore3DRegistry
+{	
 	@Getter private static final List<ClassLoader> registeredClassLoaders = new ArrayList<ClassLoader>();
 	public static void registerClassLoader(ClassLoader cl) { registeredClassLoaders.add(cl); }
 	
@@ -109,7 +93,7 @@ public class Registry
 			try { return bomEntryAccessor.call(); }
 			catch(Exception e)
 			{
-				Log.getLogger().warn("Failed to retrieve BOM Entries because " + e.getMessage() + "\n" + Util.throwableToString(e));
+				Log.getLogger().warn(Log.formatThrowable("Failed to retrieve BOM Entries!", e));
 				return new HashMap<>();
 			}
 		}
@@ -133,7 +117,7 @@ public class Registry
 			try { return routingEntryAccessor.call(); }
 			catch(Exception e)
 			{
-				Log.getLogger().warn("Failed to retrieve Routing Entries because " + e.getMessage() + "\n" + Util.throwableToString(e));
+				Log.getLogger().warn(Log.formatThrowable("Failed to retrieve Routing Entries!", e));
 				return new HashMap<>();
 			}
 		}
@@ -193,5 +177,22 @@ public class Registry
 		}
 		
 		return true;
+	}
+	
+	private static final Map<String, Consumer<Transaction>> registeredTransactionLoaders = new HashMap<>();
+	public static void registerOrderLoader(String id, Consumer<Transaction> loader)
+	{
+		if(registeredTransactionLoaders.containsKey(id)) Log.getLogger().warn("There is already a registered transaction loader with ID " + id + "! Overriding...");
+		registeredTransactionLoaders.put(id, loader);
+	}
+	public static void loadTransaction(String id, Transaction transactionToLoad)
+	{
+		Consumer<Transaction> loader = registeredTransactionLoaders.get(id);
+		if(loader != null)
+		{
+			try { loader.accept(transactionToLoad); }
+			catch(Exception e) { Log.getLogger().warn(Log.formatThrowable("Unable to load transaction with loader ID " + id + "!", e)); }
+		}
+		else Log.getLogger().warn("Unable to load transaction, as there is no transaction loader registered with the ID " + id + "!");
 	}
 }

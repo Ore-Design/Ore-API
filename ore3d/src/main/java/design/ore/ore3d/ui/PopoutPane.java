@@ -1,8 +1,6 @@
 package design.ore.ore3d.ui;
 
-import design.ore.ore3d.Util;
-import design.ore.ore3d.Util.Colors;
-import javafx.beans.binding.Bindings;
+import design.ore.ore3d.Ore3DUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.EventHandler;
@@ -11,7 +9,6 @@ import javafx.scene.Cursor;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -86,12 +83,11 @@ public class PopoutPane extends VBox
 		}
 		else
 		{
-			closeButton = new IconButton(Util.UI.colorize(new ImageView(Util.getXIcon()), Colors.getAccentProperty()), false);
+			closeButton = new IconButton(new ImageView(Ore3DUtil.getXIcon()), false);
 			closeButton.setOnAction(e -> closeOnTrue.set(true));
 		}
 		
 		dockBar = new HBox(closeButton);
-		dockBar.backgroundProperty().bind(Bindings.createObjectBinding(() -> Background.fill(Colors.getBackgroundProperty().getValue()), Colors.getBackgroundProperty()));
 		dockBar.prefWidthProperty().bind(this.widthProperty());
 		dockBar.setPrefHeight(20);
 		dockBar.setMinHeight(USE_PREF_SIZE);

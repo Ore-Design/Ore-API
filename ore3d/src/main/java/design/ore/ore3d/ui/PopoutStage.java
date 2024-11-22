@@ -1,7 +1,6 @@
 package design.ore.ore3d.ui;
 
-import design.ore.ore3d.Util.Colors;
-import design.ore.ore3d.Util.Styling;
+import design.ore.base.util.ui.Navigation;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Scene;
@@ -17,20 +16,17 @@ public class PopoutStage<T> extends Stage
 	
 	@Getter protected final BooleanProperty closeOnTrue;
 	
-	public PopoutStage(Stage parentStage, Pane content, String title, boolean useStylesheet)
+	public PopoutStage(Navigation parentNav, Pane content, String title, boolean useStylesheet)
 	{
-		this.initOwner(parentStage);
+		this.initOwner(parentNav.getStage());
 		this.setMinWidth(600);
 		this.setMinHeight(400);
 		this.setTitle(title);
 		
 		scene = new Scene(content);
-		if(useStylesheet) Styling.bindUIToStylesheet(scene);
-		scene.fillProperty().bind(Colors.getBackgroundProperty());
+		if(useStylesheet) parentNav.bindSceneToStylesheet(scene);
 		this.setScene(scene);
 		
-//		content.prefWidthProperty().bind(scene.widthProperty());
-//		content.prefHeightProperty().bind(scene.heightProperty());
 		content.setMinSize(600, 400);
 		content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		

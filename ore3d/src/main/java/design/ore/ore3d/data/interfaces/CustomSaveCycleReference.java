@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import design.ore.ore3d.Util;
-import design.ore.ore3d.Util.Log;
+import design.ore.base.util.Log;
 import design.ore.ore3d.data.core.Transaction;
 import design.ore.ore3d.data.wrappers.UpdatePacket;
 
@@ -21,7 +20,7 @@ public abstract class CustomSaveCycleReference
 		for(Consumer<CustomSaveCycleReference> call : listeners)
 		{
 			try { call.accept(this); }
-			catch(Exception e) { Log.getLogger().warn("An error occured while running listener for custom save cycle reference " + name + ": " + e.getMessage() + "\n" + Util.throwableToString(e)); }
+			catch(Exception e) { Log.getLogger().warn(Log.formatThrowable("An error occured while running listener for custom save cycle reference " + name + "!", e)); }
 		}
 	}
 
